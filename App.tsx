@@ -3,6 +3,44 @@ import { View, Text, PermissionsAndroid, Platform } from 'react-native';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import Voice from '@react-native-voice/voice';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import Sound from 'react-native-sound';
+
+Sound.setCategory('Playback');
+
+const playSound = (sound: 'A' | 'B' | 'C') => {
+  console.log('started playing ' + sound);
+  const soundFile = new Sound(
+    'https://raw.githubusercontent.com/jeffrey-zang/garmin/main/assets/' +
+      sound +
+      '.mp3',
+    undefined,
+    error => {
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+      console.log(
+        'duration in seconds: ' +
+          soundFile.getDuration() +
+          'number of channels: ' +
+          soundFile.getNumberOfChannels(),
+      );
+
+      if (sound !== 'C') {
+        soundFile.setVolume(2);
+      }
+
+      soundFile.play(success => {
+        if (success) {
+          console.log('successfully finished playing ' + sound);
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+        soundFile.release();
+      });
+    },
+  );
+};
 
 export default function App() {
   const devices = useCameraDevices();
@@ -15,7 +53,6 @@ export default function App() {
   const [videoSegments, setVideoSegments] = useState<string[]>([]);
   const segmentDuration = 60; // seconds
 
-  // Ask for permissions
   useEffect(() => {
     const requestPermissions = async () => {
       const cameraPermission = await Camera.requestCameraPermission();
@@ -32,7 +69,6 @@ export default function App() {
     requestPermissions();
   }, []);
 
-  // Voice recognition events
   useEffect(() => {
     Voice.onSpeechStart = () => console.log('Speech started ');
     Voice.onSpeechResults = (event: any) => {
@@ -75,6 +111,9 @@ export default function App() {
       transcript.includes('ok karmen')
     ) {
       console.log('Wake word detected!');
+      console.log('started playing A');
+      playSound('A');
+
       setIsListeningForCommand(true);
     }
   };
@@ -86,6 +125,8 @@ export default function App() {
 
     if (transcript.includes('video')) {
       console.log('Saving video...');
+      playSound('B');
+
       saveVideo();
     } else if (
       transcript.includes('nevermind') ||
@@ -93,6 +134,7 @@ export default function App() {
       transcript.includes('disregard')
     ) {
       console.log('Cancelled.');
+      playSound('C');
     }
 
     setIsListeningForCommand(false);
@@ -145,7 +187,8 @@ export default function App() {
     }
   };
 
-  if (device == null) return <Text>Loading camera...</Text>;
+  if (device == null)
+    return <Text style={{ margin: 'auto' }}>Loading camera...</Text>;
 
   return (
     <View style={{ flex: 1 }}>
