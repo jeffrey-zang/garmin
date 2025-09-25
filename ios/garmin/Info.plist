@@ -22,6 +22,14 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to your microphone</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We need access to speech recognition</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save videos to your photo library.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -32,7 +40,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>We need your location to tag where videos are recorded.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
